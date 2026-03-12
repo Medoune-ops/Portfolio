@@ -369,69 +369,109 @@ images.forEach(img => {
     imageObserver.observe(img);
 });
 
-// Effet de particules pour le background (optionnel)
-function createParticles() {
-    const canvas = document.createElement('canvas');
+// ============================================================
+// Système de particules 3D amélioré — Constellation + Orbes
+// Dessine sur #hero-3d-canvas (z-index 0, derrière tout)
+// ============================================================
+function initHero3DCanvas() {
+    const canvas = document.getElementById('hero-3d-canvas');
+    if (!canvas) return;
+
     const ctx = canvas.getContext('2d');
-    const particles = [];
+    const nodes = [];
+    const NUM_NODES = 70;
+    const MAX_DIST = 130; // distance max pour tracer les lignes entre nœuds
+    let animId;
 
-    canvas.style.position = 'absolute';
-    canvas.style.top = '0';
-    canvas.style.left = '0';
-    canvas.style.width = '100%';
-    canvas.style.height = '100%';
-    canvas.style.pointerEvents = 'none';
-    canvas.style.zIndex = '1';
-
-    const hero = document.querySelector('.hero');
-    if (hero) {
-        hero.appendChild(canvas);
+    // ---- Redimensionnement ----
+    function resize() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
     }
+    resize();
+    window.addEventListener('resize', () => { resize(); });
 
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-
-    function createParticle() {
+    // ---- Créer les nœuds (particules) ----
+    function createNode() {
+        const size = Math.random() * 2.5 + 0.5;
         return {
             x: Math.random() * canvas.width,
             y: Math.random() * canvas.height,
-            vx: (Math.random() - 0.5) * 0.5,
-            vy: (Math.random() - 0.5) * 0.5,
-            size: Math.random() * 2 + 1,
-            opacity: Math.random() * 0.5 + 0.2
+            vx: (Math.random() - 0.5) * 0.4,
+            vy: (Math.random() - 0.5) * 0.4,
+            size,
+            // Couleur alternée : blanc ou violet clair
+            hue: Math.random() > 0.6 ? 280 : 0,
+            saturation: Math.random() > 0.6 ? 80 : 0,
+            lightness: 90 + Math.random() * 10,
+            alpha: Math.random() * 0.6 + 0.3,
+            // Pulsation
+            pulseSpeed: Math.random() * 0.03 + 0.01,
+            pulsePhase: Math.random() * Math.PI * 2,
         };
     }
 
-    function updateParticles() {
+    for (let i = 0; i < NUM_NODES; i++) {
+        nodes.push(createNode());
+    }
+
+    // ---- Boucle d'animation ----
+    let t = 0;
+    function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        t += 0.01;
 
-        particles.forEach((particle, index) => {
-            particle.x += particle.vx;
-            particle.y += particle.vy;
+        // Mettre à jour + dessiner les nœuds
+        nodes.forEach(n => {
+            // Mouvement
+            n.x += n.vx;
+            n.y += n.vy;
+            // Rebondir sur les bords
+            if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
+            if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
 
-            if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
-            if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
+            // Pulsation de taille
+            const pulseFactor = 1 + 0.4 * Math.sin(t * n.pulseSpeed * 60 + n.pulsePhase);
+            const drawSize = n.size * pulseFactor;
 
+            // Halo lumineux (glow)
+            const grad = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, drawSize * 6);
+            grad.addColorStop(0, `hsla(${n.hue},${n.saturation}%,${n.lightness}%,${n.alpha})`);
+            grad.addColorStop(1, `hsla(${n.hue},${n.saturation}%,${n.lightness}%,0)`);
             ctx.beginPath();
-            ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(255, 255, 255, ${particle.opacity})`;
+            ctx.arc(n.x, n.y, drawSize * 6, 0, Math.PI * 2);
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            // Point central
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, drawSize, 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${n.hue},${n.saturation}%,${n.lightness}%,${Math.min(n.alpha + 0.3, 1)})`;
             ctx.fill();
         });
 
-        requestAnimationFrame(updateParticles);
+        // Dessiner les lignes entre nœuds proches (constellation)
+        for (let i = 0; i < nodes.length; i++) {
+            for (let j = i + 1; j < nodes.length; j++) {
+                const dx = nodes[i].x - nodes[j].x;
+                const dy = nodes[i].y - nodes[j].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < MAX_DIST) {
+                    const opacity = (1 - dist / MAX_DIST) * 0.25;
+                    ctx.beginPath();
+                    ctx.moveTo(nodes[i].x, nodes[i].y);
+                    ctx.lineTo(nodes[j].x, nodes[j].y);
+                    ctx.strokeStyle = `rgba(255,255,255,${opacity})`;
+                    ctx.lineWidth = 0.8;
+                    ctx.stroke();
+                }
+            }
+        }
+
+        animId = requestAnimationFrame(draw);
     }
 
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
-    // Créer les particules
-    for (let i = 0; i < 50; i++) {
-        particles.push(createParticle());
-    }
-
-    updateParticles();
+    draw();
 }
 
 // Gestion du thème sombre (optionnel)
@@ -672,8 +712,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initAccessibility();
     preloadImages();
 
-    // Optionnel: activer les particules (peut impacter les performances)
-    // createParticles();
+    // Effets 3D sur le fond violet du hero (constellation + orbes)
+    initHero3DCanvas();
 
     // Optionnel: gestion des cookies
     // initCookieConsent();

@@ -172,6 +172,26 @@ body {
     width: 100%;
 }
 
+/* Lien "Mes Travaux" avec accent special dans la nav */
+.nav-link-works {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white !important;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.nav-link-works:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    color: white !important;
+}
+
+.nav-link-works::after {
+    display: none;
+}
+
 .hamburger {
     display: none;
     flex-direction: column;
@@ -194,6 +214,149 @@ body {
     position: relative;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     overflow: hidden;
+}
+
+/* Canvas 3D — derriere tout le contenu (z-index: 0) */
+#hero-3d-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Orbes lumineux flottants (z-index: 0, ne masquent pas le contenu) */
+.hero-orb {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    filter: blur(40px);
+    opacity: 0.35;
+}
+
+.hero-orb-1 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, #f093fb, #667eea);
+    top: -80px;
+    right: 10%;
+    animation: orbFloat1 8s ease-in-out infinite;
+}
+
+.hero-orb-2 {
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, #4ade80, #667eea);
+    bottom: 5%;
+    left: 5%;
+    animation: orbFloat2 10s ease-in-out infinite;
+}
+
+.hero-orb-3 {
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, #fbbf24, #f093fb);
+    top: 60%;
+    right: 20%;
+    animation: orbFloat1 7s ease-in-out infinite reverse;
+}
+
+/* Anneaux geometriques 3D qui tournent */
+.hero-ring {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.15;
+}
+
+.hero-ring-1 {
+    width: 500px;
+    height: 500px;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotateX(60deg);
+    animation: ringRotate1 20s linear infinite;
+}
+
+.hero-ring-2 {
+    width: 350px;
+    height: 350px;
+    border: 1px solid rgba(240, 147, 251, 0.8);
+    top: 30%;
+    right: 8%;
+    transform: rotateX(45deg) rotateZ(30deg);
+    animation: ringRotate2 15s linear infinite;
+}
+
+/* Grille 3D en perspective (effet sol/espace) */
+.hero-grid-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 55%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.08;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.7) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.7) 1px, transparent 1px);
+    background-size: 60px 60px;
+    transform: perspective(400px) rotateX(55deg);
+    transform-origin: bottom center;
+    mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+}
+
+/* Animations orbes */
+@keyframes orbFloat1 {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        transform: translateY(-30px) scale(1.05);
+    }
+}
+
+@keyframes orbFloat2 {
+
+    0%,
+    100% {
+        transform: translateX(0) scale(1);
+    }
+
+    50% {
+        transform: translateX(20px) scale(1.08);
+    }
+}
+
+/* Animations anneaux */
+@keyframes ringRotate1 {
+    0% {
+        transform: translate(-50%, -50%) rotateX(60deg) rotateZ(0deg);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotateX(60deg) rotateZ(360deg);
+    }
+}
+
+@keyframes ringRotate2 {
+    0% {
+        transform: rotateX(45deg) rotateZ(30deg);
+    }
+
+    100% {
+        transform: rotateX(45deg) rotateZ(390deg);
+    }
 }
 
 .hero-container {
@@ -354,22 +517,62 @@ body {
     box-shadow: var(--shadow-hover);
 }
 
-.skill-item i {
-    font-size: 3rem;
-    color: var(--primary-color);
-    margin-bottom: 20px;
+.skill-item-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 2rem;
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    transition: var(--transition);
+}
+
+.skill-item:hover .skill-item-icon {
+    transform: scale(1.1) rotate(5deg);
 }
 
 .skill-item h4 {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
+    font-size: 1.25rem;
+    margin-bottom: 15px;
     color: var(--text-primary);
+    font-weight: 700;
 }
 
-.skill-item p {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
+.skill-sub-icons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 15px;
 }
+
+.skill-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    background: rgba(102, 126, 234, 0.05);
+    padding: 4px 10px;
+    border-radius: 20px;
+    transition: var(--transition);
+}
+
+.skill-label i {
+    font-size: 1rem;
+}
+
+.skill-label:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
 
 /* Parcours Section */
 .parcours {
@@ -505,21 +708,38 @@ body {
 }
 
 .skill-tag {
-    padding: 8px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100px;
+    height: 100px;
     background: var(--bg-secondary);
     color: var(--text-secondary);
-    border-radius: 8px;
-    font-weight: 500;
+    border-radius: 16px;
     transition: var(--transition);
-    border: 1px solid transparent;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.skill-tag i {
+    font-size: 2.2rem;
+}
+
+.skill-tag span {
+    font-size: 0.8rem;
+    font-weight: 600;
 }
 
 .skill-tag:hover {
-    background: rgba(102, 126, 234, 0.1);
-    color: var(--primary-color);
-    border-color: var(--primary-color);
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-color: transparent;
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
 }
+
 
 /* Current Focus Card */
 .focus-card {
@@ -629,6 +849,65 @@ body {
     border-radius: 20px;
     font-size: 0.85rem;
     font-weight: 600;
+}
+
+/* Bouton CTA sous les services */
+.services-cta {
+    text-align: center;
+    margin-top: 50px;
+    padding-top: 20px;
+}
+
+.btn-works-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 36px;
+    font-size: 17px;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-radius: 50px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.35s ease;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.35);
+    letter-spacing: 0.3px;
+}
+
+.btn-works-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+
+.btn-works-cta:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(102, 126, 234, 0.5);
+}
+
+.btn-works-cta:hover::before {
+    opacity: 1;
+}
+
+.btn-works-cta i,
+.btn-works-cta span {
+    position: relative;
+    z-index: 1;
+}
+
+.btn-works-cta .fa-arrow-right {
+    transition: transform 0.3s ease;
+}
+
+.btn-works-cta:hover .fa-arrow-right {
+    transform: translateX(5px);
 }
 
 /* Services Section */
