@@ -573,16 +573,52 @@ body {
 }
 
 .focus-list li {
-    margin-bottom: 8px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.project-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+.project-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(5px);
+}
+
+.project-name {
+    font-weight: 500;
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 0.95rem;
 }
 
-.focus-list li i {
-    font-size: 0.8rem;
-    opacity: 0.7;
+.project-links {
+    display: flex;
+    gap: 10px;
+}
+
+.project-link {
+    color: white;
+    font-size: 1.1rem;
+    opacity: 0.8;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.project-link:hover {
+    opacity: 1;
+    transform: scale(1.2);
+    color: var(--accent-color);
 }
 
 .focus-badge {
